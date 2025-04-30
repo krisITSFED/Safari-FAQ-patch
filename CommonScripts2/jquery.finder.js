@@ -51,17 +51,43 @@ $(document).ready(function () {
 
 const finder = {
     activator: '[data-finder-activator]',
-
     content: '[data-finder-content]',
-
     wrapper: '[data-finder-wrapper]',
-
     scrollOffset: () => $(finder.wrapper).data('finderScrollOffset'),
+
+    updatePosition: null,
+    isTyping: false,
+
+    trackPosition: () => {
+        const el = document.getElementById('finder');
+        if (!el) return;
+
+        el.style.position = 'absolute';
+
+        finder.updatePosition = () => {
+            // Only skip repositioning during typing to prevent blinking
+            if (finder.isTyping) return;
+            el.style.top = window.scrollY + 'px';
+        };
+
+        finder.updatePosition(); // initial position
+        window.addEventListener('scroll', finder.updatePosition);
+        window.addEventListener('resize', finder.updatePosition);
+    },
+
+    untrackPosition: () => {
+        if (finder.updatePosition) {
+            window.removeEventListener('scroll', finder.updatePosition);
+            window.removeEventListener('resize', finder.updatePosition);
+            finder.updatePosition = null;
+        }
+    },
 
     activate: () => {
         if (!$('#finder').length) {
             finder.createFinder();
         }
+
         setTimeout(function () {
             $('#finder').addClass('findon');
             $('#finderInput').focus();
@@ -70,25 +96,25 @@ const finder = {
                 finder.findTerm($('#finderInput').val());
             }
 
+            let typingTimer;
             $('#finderInput').on('input', function () {
+                finder.isTyping = true;
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    finder.isTyping = false;
+                }, 250);
                 finder.findTerm($(this).val());
             });
 
-            // 🔧 Start scroll-based "fixed" behavior
-            finder.trackPosition();
+            finder.trackPosition(); // 👈 start fixed-position simulation
         }, 50);
     },
 
-
     closeFinder: () => {
-        $('#finderInput').attr("aria-hidden", "true");
-        $('#finderInput').attr("tabindex", "-1");
-        $('#finderPrev').attr("aria-hidden", "true");
-        $('#finderPrev').attr("tabindex", "-1");
-        $('#finderNext').attr("aria-hidden", "true");
-        $('#finderNext').attr("tabindex", "-1");
-        $('#finderClose').attr("aria-hidden", "true");
-        $('#finderClose').attr("tabindex", "-1");
+        $('#finderInput').attr("aria-hidden", "true").attr("tabindex", "-1");
+        $('#finderPrev').attr("aria-hidden", "true").attr("tabindex", "-1");
+        $('#finderNext').attr("aria-hidden", "true").attr("tabindex", "-1");
+        $('#finderClose').attr("aria-hidden", "true").attr("tabindex", "-1");
 
         $('#finder').removeClass('findon');
         $(finder.content).unhighlight();
@@ -100,34 +126,25 @@ const finder = {
         finder.currentResult = 0;
         $(finder.wrapper).scrollTop(0);
 
-        // 🔧 Remove scroll behavior
-        finder.untrackPosition();
+        finder.untrackPosition(); // 👈 clean up scroll tracking
     },
 
-
     resultsCount: 0,
-
     currentResult: 0,
 
     findTerm: (term) => {
-        // highlight results
         $(finder.content).unhighlight();
-        // Highlight only visible elements containing the term
         $(finder.content).find(':visible').highlight(term);
 
-        // Count only visible results
         finder.resultsCount = $('.findhighlight:visible').length;
 
         if (finder.resultsCount) {
-            // there are results, scroll to first one
             finder.currentResult = 1;
             finder.scrollToCurrent();
         } else {
-            // no results
             finder.currentResult = 0;
         }
 
-        // term not found
         if (!finder.resultsCount && term) {
             $('#finderInput').addClass('not-found');
         } else {
@@ -138,8 +155,6 @@ const finder = {
     },
 
     scrollToCurrent: () => {
-        let scrollingElement;
-
         let i = finder.currentResult - 1;
         $('.findhighlight').removeClass('findon');
         const currentElement = $(`.findhighlight:eq(${i})`);
@@ -160,11 +175,7 @@ const finder = {
 
     prevResult: () => {
         if (finder.resultsCount) {
-            if (finder.currentResult > 1) {
-                finder.currentResult--;
-            } else {
-                finder.currentResult = finder.resultsCount;
-            }
+            finder.currentResult = finder.currentResult > 1 ? finder.currentResult - 1 : finder.resultsCount;
             finder.scrollToCurrent();
         }
         finder.updateCurrent();
@@ -172,11 +183,7 @@ const finder = {
 
     nextResult: () => {
         if (finder.resultsCount) {
-            if (finder.currentResult < finder.resultsCount) {
-                finder.currentResult++;
-            } else {
-                finder.currentResult = 1;
-            }
+            finder.currentResult = finder.currentResult < finder.resultsCount ? finder.currentResult + 1 : 1;
             finder.scrollToCurrent();
         }
         finder.updateCurrent();
@@ -185,53 +192,19 @@ const finder = {
     updateCurrent: () => {
         if ($('#finderInput').val()) {
             if (!$('#finderCount').length) {
-                const countElem = $('<span />')
-                    .attr({
-                        'id': 'finderCount',
-                        'class': 'finder-count',
-                    })
-                    .insertAfter('#finderInput');
-                // create element with that will read search result
+                $('<span />', { id: 'finderCount', class: 'finder-count' }).insertAfter('#finderInput');
                 $('#finderCount').after("<span class='searchResult visuallyhidden' aria-live='polite'></span>");
-
             }
-            setTimeout(function () {
+
+            setTimeout(() => {
                 $('#finderCount').text(finder.currentResult + ' / ' + finder.resultsCount);
-                // new for A11Y
-                $('.searchResult').text("Search Result " + finder.currentResult + ' of ' + finder.resultsCount); // say the result term
-                $('.findhighlight.findon').attr({ 'aria-live': 'polite' }); // say the paragraph that contain the search term
+                $('.searchResult').text("Search Result " + finder.currentResult + ' of ' + finder.resultsCount);
+                $('.findhighlight.findon').attr({ 'aria-live': 'polite' });
             }, 500);
         } else {
             $('.searchResult.visuallyhidden').remove();
             $('#finderCount').remove();
         }
     },
-    updatePosition: null,
-    trackPosition: () => {
-        const el = document.getElementById('finder');
-        const input = document.getElementById('finderInput');
-        if (!el || !input) return;
-
-        el.style.position = 'absolute';
-
-        finder.updatePosition = () => {
-            // Don't reposition while typing
-            if (document.activeElement === input) return;
-            el.style.top = window.scrollY + 'px';
-        };
-
-        finder.updatePosition(); // initial
-        window.addEventListener('scroll', finder.updatePosition);
-        window.addEventListener('resize', finder.updatePosition);
-    },
-    untrackPosition: () => {
-        if (finder.updatePosition) {
-            window.removeEventListener('scroll', finder.updatePosition);
-            window.removeEventListener('resize', finder.updatePosition);
-            finder.updatePosition = null;
-        }
-    },
-
-
-}
+};
 
