@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html class="stellar-run device-big device-desktop">
 <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport"
+        content="width=device-width, maximum-scale=1, minimum-scale=1, initial-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="format-detection" content="telephone=no">
     <title>FAQ</title>
     <link rel="stylesheet" type="text/css" href="main.css">
     <script src="CommonScripts2/jquery_1.min.js"></script>
@@ -13,7 +18,7 @@
     <script src="CommonScripts2/jquery.finder.js"></script>
     <script src="CommonScripts2/jquery.highlight.js"></script>
     <script src="CommonScripts2/jquery.scrollto.js"></script>
-
+    <script src="CommonScripts2/theme-stellar-run.js"></script>
 
 
     <style type="text/css" nonce="">
@@ -33,21 +38,14 @@
             margin-bottom: 10px;
         }
 
-        @supports (-webkit-touch-callout: none) {
+        /* @supports (-webkit-touch-callout: none) {
             .finder {
                 background: lightblue;
             }
-        }
+        } */
     </style>
 
-    <script>
-        $(document).ready(function () {
-            var useStellarRun = document.createElement('script');
-            useStellarRun.type = 'text/javascript';
-            useStellarRun.src = "JavaScript/theme-stellar-run.js";
-            document.head.appendChild(useStellarRun);
-        });
-    </script>
+
 </head>
 
 <body class="body-faq body-reg-faq" data-finder-wrapper data-finder-scroll-offset="175">
@@ -74,12 +72,10 @@
 
     <div class="site-container">
 
-        <header class="site-header" role="banner">
+        <header class="site-header">
             <div class="site-header-inner">
 
                 <div class="header-branding">
-                    <!--img id="CoBrand02" class="site-logo co-brand co-brand-02" alt="" src="../../../../Custom%20Resources/img/icon-logo2.svg" height="80" width="80"-->
-
                     <img id="CoBrand01" class="site-logo co-brand co-brand-site co-brand-01" alt=""
                         src="images/icon-logo.svg" height="80" width="80">
 
@@ -89,22 +85,9 @@
                     </h1>
                 </div>
 
-                <div class="header-actions">
-                    <include_site id="languagedropdown">
-                        <template id="SiteLanguages.inc" />
-                    </include_site>
+                <div class="header-actions"></div><!--/header-actions-->
 
-                    <include_session id="securebrowser">
-                        <exclude_session id="ITSMobile or ITSChrome or ITSAndroid">
-                            <button id="CloseSb" class="btn-nrm btn-close-sb" tabindex="1"><span id="ClsScrBrwsr"
-                                    class="cstxt visuallyhidden editable">Close</span>
-                                <div class="sprite-icon icon-clssb"></div>
-                            </button>
-                        </exclude_session>
-                    </include_session>
-                </div><!--/header-actions-->
-
-            </div><!--/site-header-inner-->
+            </div>
         </header>
 
         <div class="page-header">
@@ -113,24 +96,21 @@
 
         <nav id="MainNav" class="main-nav">
             <div id="NavBurger" class="nav-burger">
-                <input id="NavTrigger" class="visuallyhidden" type="checkbox" aria-labelledby="ShowMenuTxt" role="button" />
+                <input id="NavTrigger" class="visuallyhidden" type="checkbox" aria-labelledby="ShowMenuTxt" role="button">
                 <label id="NavIcon" class="nav-icon" for="NavTrigger">
                     <div class="sprite-icon icon-brgr"></div>
                     <span aria-hidden="true" id="ShowMenuTxt" class="visuallyhidden">Show Navigation Menu</span>
                 </label>
             </div><!--/burger-->
-
             <ul id="NavMenu" class="nav-menu">
-                <li class="nav-item-faq"><a href="#">
-                        <div class="sprite-icon icon-faq"></div><span class="lnk-nav-txt">Frequently Asked Questions</span>
-                    </a></li>
-
                 <li class="nav-item-chat"><a href="#">
                         <div class="sprite-icon icon-chat"></div><span class="lnk-nav-txt">Chat</span>
                     </a></li>
-
                 <li class="nav-item-badge"><a href="#">
                         <div class="sprite-icon icon-badge"></div><span class="lnk-nav-txt">Badges</span>
+                    </a></li>
+                <li class="nav-item-faq"><a href="#">
+                        <div class="sprite-icon icon-faq"></div><span class="lnk-nav-txt">Frequently Asked Questions</span>
                     </a></li>
             </ul>
         </nav>
@@ -142,13 +122,11 @@
                 <div class="faq-actions">
                     <div>
                         <button type="button" class="btn-nrm btn-sml shown" id="ExpandAllAccrds">Expand All</button>
-                        <button type="button" class="btn-nrm btn-sml hidden" id="CollapseAllAccrds">Collapse
-                            All</button>
+                        <button type="button" class="btn-nrm btn-sml hidden" id="CollapseAllAccrds">Collapse All</button>
                     </div>
 
                     <button id="OpenFinderSearcher" class="btn-nrm finder-activator" data-finder-activator>
-                        <div class="sprite-icon icon-srch icon-med"></div>Search [@FrequentlyAskedQuestions@]
-                    </button>
+                        <div class="sprite-icon icon-srch icon-med"></div>Search </button>
                 </div>
 
                 <div data-finder-content="">
@@ -1522,8 +1500,7 @@
 
             </div>
         </footer>
-
-    </div><!--/site-container-->
+    </div>
 
     <script src="/Templates/CommonScripts/faq-accords.js"></script>
 

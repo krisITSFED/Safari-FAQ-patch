@@ -124,21 +124,16 @@ body {
 }
 
 /* Safari container type */
-@supports (-webkit-touch-callout: none) {
-  body {
+/* @supports (-webkit-touch-callout: none) {
+  body.body-faq {
     container-type: normal !important;
   }
 
-  .site-container {
+  body.body-faq .site-container {
     container-type: inline-size;
   }
 
-  /* #finder {
-    position: sticky;
-    top: 0;
-    width: 100%;
-  } */
-}
+} */
 
 
 @media (max-width: 768px) {
