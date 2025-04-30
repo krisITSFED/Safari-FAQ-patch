@@ -1,5 +1,6 @@
 // Expand All Accordions
 $("#ExpandAllAccrds").click(function () {
+  console.log("Expand All Accordions clicked");
   $(this).removeClass('shown').addClass('hidden');
   $('#CollapseAllAccrds').removeClass('hidden').addClass('shown');
 
