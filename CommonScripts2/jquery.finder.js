@@ -65,14 +65,20 @@ const finder = {
         setTimeout(function () {
             $('#finder').addClass('findon');
             $('#finderInput').focus();
+
             if ($('#finderInput').val()) {
                 finder.findTerm($('#finderInput').val());
             }
+
             $('#finderInput').on('input', function () {
                 finder.findTerm($(this).val());
             });
+
+            // 🔧 Start scroll-based "fixed" behavior
+            finder.trackPosition();
         }, 50);
     },
+
 
     closeFinder: () => {
         $('#finderInput').attr("aria-hidden", "true");
@@ -86,21 +92,18 @@ const finder = {
 
         $('#finder').removeClass('findon');
         $(finder.content).unhighlight();
-
-        // Clear the search input field
         $('#finderInput').val('').removeClass('not-found');
-
-        // Remove the results count and related elements
         $('.searchResult.visuallyhidden').remove();
         $('#finderCount').remove();
 
-        // Reset the results tracking
         finder.resultsCount = 0;
         finder.currentResult = 0;
-
-        // Scroll the finder wrapper back to the top
         $(finder.wrapper).scrollTop(0);
+
+        // 🔧 Remove scroll behavior
+        finder.untrackPosition();
     },
+
 
     resultsCount: 0,
 
@@ -203,5 +206,32 @@ const finder = {
             $('#finderCount').remove();
         }
     },
+    updatePosition: null,
+    trackPosition: () => {
+        const el = document.getElementById('finder');
+        const input = document.getElementById('finderInput');
+        if (!el || !input) return;
+
+        el.style.position = 'absolute';
+
+        finder.updatePosition = () => {
+            // Don't reposition while typing
+            if (document.activeElement === input) return;
+            el.style.top = window.scrollY + 'px';
+        };
+
+        finder.updatePosition(); // initial
+        window.addEventListener('scroll', finder.updatePosition);
+        window.addEventListener('resize', finder.updatePosition);
+    },
+    untrackPosition: () => {
+        if (finder.updatePosition) {
+            window.removeEventListener('scroll', finder.updatePosition);
+            window.removeEventListener('resize', finder.updatePosition);
+            finder.updatePosition = null;
+        }
+    },
+
+
 }
 
