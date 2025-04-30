@@ -8143,8 +8143,8 @@ input[type="checkbox"].toggle-password-box:focus-visible~.icon-eye,
 .finder.findon {
   top: 0;
   z-index: 9999999;
-  width: 100vw;
-  max-width: 100vw;
+  width: 100%;
+  max-width: 100dvw;
 }
 
 input.finder-input {
@@ -8206,6 +8206,7 @@ input.finder-input {
 }
 
 .finder.findon {
+  position:-webkit-sticky;
   position: fixed;
 }
 
