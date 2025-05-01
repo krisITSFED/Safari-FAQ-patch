@@ -8139,16 +8139,18 @@ input[type="checkbox"].toggle-password-box:focus-visible~.icon-eye,
   max-width: 100vw;
   z-index: -1;
   opacity: 0;
+
+  &.findon {
+      top: 0;
+      z-index: 9999999;
+      width: 100%;
+      max-width: 100dvw;
+      height: 100px;
+      opacity: 1;
+    }
 }
 
-.finder.findon {
-  top: 0;
-  z-index: 9999999;
-  width: 100%;
-  max-width: 100dvw;
-  height: 100px;
-  opacity: 1;
-}
+
 
 input.finder-input {
   flex-grow: 1;
